@@ -1,7 +1,5 @@
 package com.example.cvetko_subnet;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
@@ -9,188 +7,134 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
+    private EditText ipAddressEditText, subnetMaskEditText;
+    private Button calculateButton;
+    private TextView resultTextView;
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button button = findViewById(R.id.button);
-        EditText ipadr = findViewById(R.id.editTextIP);
-        EditText subnet = findViewById(R.id.editTextSubnet);
+        ipAddressEditText = findViewById(R.id.editTextIpAddress);
+        subnetMaskEditText = findViewById(R.id.editTextSubnetMask);
+        calculateButton = findViewById(R.id.buttonCalculate);
+        resultTextView = findViewById(R.id.textViewResult);
 
-        TextView ip = findViewById(R.id.ipAdresa);
-        TextView sub = findViewById(R.id.subnetMaska);
-        TextView wild = findViewById(R.id.wildcard);
-        TextView netid = findViewById(R.id.netID);
-        TextView minh = findViewById(R.id.rasponHost);
-        TextView maxh = findViewById(R.id.rasponHost2);
-        TextView brod = findViewById(R.id.broadcastAdr);
-        TextView ukbr = findViewById(R.id.ukBrHost);
-        TextView iskh = findViewById(R.id.brIskHost);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("SetTextI18n")
-            public void onClick(View v) {
-                if(!ipadr.getText().toString().equals("") && !subnet.getText().toString().equals("")){
-                    String IP = ipadr.getText().toString();
-                    String Subnet = subnet.getText().toString();
-
-                    if(Subnet.charAt(0)=='/'){
-                        Subnet = Subnet.replace("/","");
-                        int x = 0;
-                        try {
-                            x = Integer.parseInt(Subnet);
-                        } catch (NumberFormatException nfe) {
-                        }
-                        switch (x){
-                            case 1:
-                                Subnet = "128.0.0.0";
-                                break;
-                            case 2:
-                                Subnet = "192.0.0.0";
-                                break;
-                            case 3:
-                                Subnet = "224.0.0.0";
-                                break;
-                            case 4:
-                                Subnet = "240.0.0.0";
-                                break;
-                            case 5:
-                                Subnet = "248.0.0.0";
-                                break;
-                            case 6:
-                                Subnet = "252.0.0.0";
-                                break;
-                            case 7:
-                                Subnet = "254.0.0.0";
-                                break;
-                            case 8:
-                                Subnet = "255.0.0.0";
-                                break;
-                            case 9:
-                                Subnet = "255.128.0.0";
-                                break;
-                            case 10:
-                                Subnet = "255.192.0.0";
-                                break;
-                            case 11:
-                                Subnet = "255.224.0.0";
-                                break;
-                            case 12:
-                                Subnet = "255.240.0.0";
-                                break;
-                            case 13:
-                                Subnet = "255.248.0.0";
-                                break;
-                            case 14:
-                                Subnet = "255.252.0.0";
-                                break;
-                            case 15:
-                                Subnet = "255.254.0.0";
-                                break;
-                            case 16:
-                                Subnet = "255.255.0.0";
-                                break;
-                            case 17:
-                                Subnet = "255.255.128.0";
-                                break;
-                            case 18:
-                                Subnet = "255.255.192.0";
-                                break;
-                            case 19:
-                                Subnet = "255.255.224.0";
-                                break;
-                            case 20:
-                                Subnet = "255.255.240.0";
-                                break;
-                            case 21:
-                                Subnet = "255.255.248.0";
-                                break;
-                            case 22:
-                                Subnet = "255.255.252.0";
-                                break;
-                            case 23:
-                                Subnet = "255.255.254.0";
-                                break;
-                            case 24:
-                                Subnet = "255.255.255.0";
-                                break;
-                            case 25:
-                                Subnet = "255.255.255.128";
-                                break;
-                            case 26:
-                                Subnet = "255.255.255.192";
-                                break;
-                            case 27:
-                                Subnet = "255.255.255.224";
-                                break;
-                            case 28:
-                                Subnet = "255.255.255.240";
-                                break;
-                            case 29:
-                                Subnet = "255.255.255.248";
-                                break;
-                            case 30:
-                                Subnet = "255.255.255.252";
-                                break;
-                            case 31:
-                                Subnet = "255.255.255.254";
-                                break;
-                            case 32:
-                                Subnet = "255.255.255.255";
-                                break;
-                        }
-                    }
-
-                    String[] IP1 = IP.split("\\.");
-                    String[] Subnet1 = Subnet.split("\\.");
-
-                    int[] IP2={0,0,0,0};
-                    int[] Subnet2={0,0,0,0};
-
-                    for(int i=0;i<4;i++) {
-                        try {
-                            IP2[i] = Integer.parseInt(IP1[i].toString());
-                            Subnet2[i] = Integer.parseInt(Subnet1[i].toString());
-                        } catch (NumberFormatException nfe) {
-
-                        }
-                    }
-                    int[] NETID  = {IP2[0]&Subnet2[0],IP2[1]&Subnet2[1],IP2[2]&Subnet2[2],IP2[3]&Subnet2[3],};
-                    int[] br1={Subnet2[0],Subnet2[1],Subnet2[2],Subnet2[3]};
-                    int[] br2={Subnet2[0],Subnet2[1],Subnet2[2],Subnet2[3]};
-                    for(int i=0;i<4;i++){
-                        br1[i]=256-br1[i];
-                        br2[i]=255-br2[i];
-                    }
-                    int briskh = br1[0]*br1[1]*br1[2]*br1[3];
-                    int[] broadcast = {NETID[0]+br2[0],NETID[1]+br2[1],NETID[2]+br2[2],NETID[3]+br2[3]};
-
-                    String klasa = "";
-                    if (IP2[0]<128){
-                        klasa = " (Klasa A)";
-                    }
-                    else if (IP2[0]<192){
-                        klasa = " (Klasa B)";
-                    }
-                    else if (IP2[0]<224){
-                        klasa = " (Klasa C)";
-                    }
-
-                    ip.setText("IP adresa: "+IP+klasa);
-                    sub.setText("Subnet maska: "+Subnet);
-                    wild.setText("Wildcard: "+br2[0]+"."+br2[1]+"."+br2[2]+"."+br2[3]);
-                    netid.setText("Net ID: "+NETID[0]+"."+NETID[1]+"."+NETID[2]+"."+NETID[3]);
-                    minh.setText("Min. host: "+NETID[0]+"."+NETID[1]+"."+NETID[2]+"."+(NETID[3]+1));
-                    maxh.setText("Max. host: "+broadcast[0]+"."+broadcast[1]+"."+broadcast[2]+"."+(broadcast[3]-1));
-                    brod.setText("Broadcast adresa: "+broadcast[0]+"."+broadcast[1]+"."+broadcast[2]+"."+broadcast[3]);
-                    ukbr.setText("Ukupan broj hostova: "+(briskh));
-                    iskh.setText("Broj iskoristivih hostova: "+(briskh-2));
-
-                }
+        calculateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calculateAndDisplay();
             }
         });
     }
+
+    private void calculateAndDisplay() {
+        String ipAddress = ipAddressEditText.getText().toString().trim();
+        String subnetMask = subnetMaskEditText.getText().toString().trim();
+        ;
+
+        if (isValidIpAddress(ipAddress) && isValidSubnetMask(subnetMask)) {
+            // Perform calculations and display results in the resultTextView
+            // You can implement the logic for calculations here
+
+            // For example:
+            String wildcard = calculateWildcard(subnetMask);
+            String netId = calculateNetId(ipAddress, subnetMask);
+            String broadcast = calculateBroadcast(netId, wildcard);
+            String usableHostRange = calculateUsableHostRange(netId, broadcast);
+
+            // Display the results
+            String result = "Wildcard: " + wildcard + "\n"
+                    + "Net ID: " + netId + "\n"
+                    + "Broadcast: " + broadcast + "\n"
+                    + "Upotrebljivi raspon IP-a hosta:" + usableHostRange +"\n";
+                    // Add more results as needed...
+                    ;
+
+            resultTextView.setText(result);
+        } else {
+            resultTextView.setText("Invalid IP address or subnet mask");
+        }
+    }
+
+    private boolean isValidIpAddress(String ipAddress) {
+        // Implement your IP address validation logic
+        // For simplicity, a basic validation is provided here
+        return ipAddress.matches("\\d+\\.\\d+\\.\\d+\\.\\d+");
+    }
+
+    private boolean isValidSubnetMask(String subnetMask) {
+        // Implement your subnet mask validation logic
+        // For simplicity, a basic validation is provided here
+        return subnetMask.matches("\\d+\\.\\d+\\.\\d+\\.\\d+");
+    }
+
+    private String calculateWildcard(String subnetMask) {
+        // Calculate the wildcard mask (inverse of subnet mask)
+        String[] subnetMaskOctets = subnetMask.split("\\.");
+        StringBuilder wildcardMask = new StringBuilder();
+        for (String octet : subnetMaskOctets) {
+            int value = Integer.parseInt(octet);
+            wildcardMask.append(255 - value).append(".");
+        }
+        return wildcardMask.substring(0, wildcardMask.length() - 1);
+    }
+
+    private String calculateNetId(String ipAddress, String subnetMask) {
+        // Calculate the network ID (AND operation between IP and subnet)
+        String[] ipOctets = ipAddress.split("\\.");
+        String[] subnetMaskOctets = subnetMask.split("\\.");
+        StringBuilder netId = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            int ipValue = Integer.parseInt(ipOctets[i]);
+            int subnetValue = Integer.parseInt(subnetMaskOctets[i]);
+            netId.append(ipValue & subnetValue).append(".");
+        }
+        return netId.substring(0, netId.length() - 1);
+    }
+
+    private String calculateBroadcast(String netId, String wildcard) {
+        // Calculate the broadcast address
+        String[] netIdOctets = netId.split("\\.");
+        String[] wildcardOctets = wildcard.split("\\.");
+        StringBuilder broadcast = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            int netIdValue = Integer.parseInt(netIdOctets[i]);
+            int wildcardValue = Integer.parseInt(wildcardOctets[i]);
+            broadcast.append((netIdValue | wildcardValue) & 255).append(".");
+        }
+        return broadcast.substring(0, broadcast.length() - 1);
+    }
+    private String calculateUsableHostRange(String netId, String broadcast) {
+        // Calculate usable host IP range (exclude network address and broadcast address)
+        String[] netIdOctets = netId.split("\\.");
+        String[] broadcastOctets = broadcast.split("\\.");
+
+        StringBuilder startIp = new StringBuilder();
+        StringBuilder endIp = new StringBuilder();
+
+        for (int i = 0; i < 4; i++) {
+            if (i == 3) {
+                // Increment the last octet for the start IP
+                startIp.append(Integer.parseInt(netIdOctets[i]) + 1).append(".");
+                // Decrement the last octet for the end IP
+                endIp.append(Integer.parseInt(broadcastOctets[i]) - 1).append(".");
+            } else {
+                startIp.append(netIdOctets[i]).append(".");
+                endIp.append(broadcastOctets[i]).append(".");
+            }
+        }
+
+        return startIp.substring(0, startIp.length() - 1) + " - " + endIp.substring(0, endIp.length() - 1);
+    }
+
 }
